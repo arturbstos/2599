@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lisbon Tourism Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            font-weight: 400;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .city-badge {
+            background: linear-gradient(135deg, #ff0000, #006600);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .date-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        select, button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            height: 400px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+        
+        .chart-wrapper {
+            height: calc(100% - 40px);
+            position: relative;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        #map {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-weight: 400;
+        }
+        
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .metric-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .metric-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+        
+        .trend-up {
+            color: #27ae60;
+        }
+        
+        .trend-down {
+            color: #e74c3c;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div>
+                <h1>Lisbon Tourism Management Dashboard</h1>
+                <div class="city-badge">Lisbon, Portugal</div>
+            </div>
+            <div class="date-selector">
+                <select id="timeRange">
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d" selected>Last 30 Days</option>
+                    <option value="90d">Last 90 Days</option>
+                    <option value="1y">Last Year</option>
+                </select>
+                <button id="refreshBtn">Refresh Data</button>
+            </div>
+        </header>
+        
+        <div class="info-box">
+            Monitor tourism density, forecast visitor inflows, and optimize resource allocation to balance tourism growth with resident quality of life in Lisbon.
+        </div>
+        
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-label">Tourist-to-Resident Ratio</div>
+                <div class="metric-value">1:2.8</div>
+                <div class="metric-trend trend-up">↑ 15% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Peak Day Visitors</div>
+                <div class="metric-value">38,450</div>
+                <div class="metric-trend trend-up">↑ 10% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg. Daily Visitors</div>
+                <div class="metric-value">25,680</div>
+                <div class="metric-trend trend-down">↓ 2% from last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Resident Satisfaction</div>
+                <div class="metric-value">68%</div>
+                <div class="metric-trend trend-down">↓ 7% from last month</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="chart-container">
+                <div class="chart-title">
+                    Heatmap – Tourist-to-Resident Ratio / Density
+                    <select id="heatmapMetric">
+                        <option value="ratio">Ratio</option>
+                        <option value="density">Density</option>
+                    </select>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="heatmapChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-title">
+                    Tourist / Passenger Inflow Forecasts
+                    <select id="forecastType">
+                        <option value="tourists">Tourists</option>
+                        <option value="passengers">Passengers</option>
+                    </select>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container full-width">
+                <div class="chart-title">
+                    Calendar / Timeline Overlay – Peak Times & Event Impacts
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="calendarChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container full-width">
+                <div class="chart-title">
+                    Interactive Flow Map – Mobility & Hotspot Mapping
+                </div>
+                <div class="chart-wrapper">
+                    <div id="map"></div>
+                </div>
+            </div>
+            
+            <div class="chart-container full-width">
+                <div class="chart-title">
+                    Bar / Overlay Chart – Capacity vs. Usage / Resource Pressure
+                    <select id="resourceType">
+                        <option value="transport">Public Transport</option>
+                        <option value="parking">Parking</option>
+                        <option value="waste">Waste Management</option>
+                    </select>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="capacityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeHeatmap();
+            initializeForecastChart();
+            initializeCalendarChart();
+            initializeMap();
+            initializeCapacityChart();
+            
+            // Add event listeners
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                alert('Refreshing data...');
+                // In a real application, this would fetch new data from an API
+            });
+            
+            document.getElementById('heatmapMetric').addEventListener('change', initializeHeatmap);
+            document.getElementById('forecastType').addEventListener('change', initializeForecastChart);
+            document.getElementById('resourceType').addEventListener('change', initializeCapacityChart);
+        });
+        
+        function initializeHeatmap() {
+            const ctx = document.getElementById('heatmapChart').getContext('2d');
+            const metric = document.getElementById('heatmapMetric').value;
+            
+            // Lisbon-specific areas
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const areas = ['Baixa/Chiado', 'Alfama', 'Belém', 'Bairro Alto', 'Parque das Nações', 'Avenida da Liberdade', 'Mouraria'];
+            
+            // Generate sample data
+            const data = [];
+            for (let i = 0; i < areas.length; i++) {
+                for (let j = 0; j < days.length; j++) {
+                    let value;
+                    if (metric === 'ratio') {
+                        // Higher ratios on weekends and in tourist areas
+                        const isWeekend = j >= 5; // Saturday and Sunday
+                        const isTouristArea = i <= 3; // First four areas are more touristy
+                        value = (isTouristArea ? 1.8 : 0.7) + (isWeekend ? 0.6 : 0) + (Math.random() * 0.4 - 0.2);
+                    } else {
+                        // Higher density on weekends and in tourist areas
+                        const isWeekend = j >= 5;
+                        const isTouristArea = i <= 3;
+                        value = (isTouristArea ? 800 : 300) + (isWeekend ? 200 : 0) + (Math.random() * 100 - 50);
+                    }
+                    data.push({
+                        x: days[j],
+                        y: areas[i],
+                        v: value
+                    });
+                }
+            }
+            
+            // Create heatmap chart
+            new Chart(ctx, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Tourist Density',
+                        data: data,
+                        backgroundColor: function(context) {
+                            const value = context.dataset.data[context.dataIndex].v;
+                            const alpha = metric === 'ratio' ? 
+                                Math.min(1, value / 2.5) : 
+                                Math.min(1, value / 1100);
+                            return `rgba(52, 152, 219, ${alpha})`;
+                        }
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'category',
+                            title: {
+                                display: true,
+                                text: 'Day of Week'
+                            }
+                        },
+                        y: {
+                            type: 'category',
+                            title: {
+                                display: true,
+                                text: 'Lisbon Areas'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: metric === 'ratio' ? 
+                                'Tourist-to-Resident Ratio (Higher = More Tourists)' : 
+                                'Tourist Density (People per km²)'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw.v;
+                                    return metric === 'ratio' ? 
+                                        `Ratio: ${value.toFixed(2)}` : 
+                                        `Density: ${Math.round(value)} people/km²`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeForecastChart() {
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            const type = document.getElementById('forecastType').value;
+            
+            // Generate dates for the next 30 days
+            const dates = [];
+            for (let i = 0; i < 30; i++) {
+                dates.push(moment().add(i, 'days'));
+            }
+            
+            // Generate sample data with Lisbon patterns
+            const actualData = dates.map(date => {
+                const base = type === 'tourists' ? 22000 : 16000;
+                // Higher on weekends
+                const dayOfWeek = date.day();
+                const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.3 : 0;
+                // Random variation
+                const random = (Math.random() - 0.5) * 0.2;
+                return base * (1 + weekendBoost + random);
+            });
+            
+            const forecastData = dates.map((date, i) => {
+                if (i < 7) return actualData[i]; // First 7 days are "actual"
+                
+                const base = type === 'tourists' ? 22000 : 16000;
+                const dayOfWeek = date.day();
+                const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.3 : 0;
+                const trend = 1 + (i - 7) * 0.005; // Slight upward trend
+                const random = (Math.random() - 0.5) * 0.1;
+                return base * trend * (1 + weekendBoost + random);
+            });
+            
+            // Create forecast chart
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Actual',
+                            data: actualData.slice(0, 7),
+                            borderColor: 'rgb(52, 152, 219)',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Forecast',
+                            data: forecastData,
+                            borderColor: 'rgb(231, 76, 60)',
+                            borderDash: [5, 5],
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: type === 'tourists' ? 'Number of Tourists' : 'Number of Passengers'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeCalendarChart() {
+            const ctx = document.getElementById('calendarChart').getContext('2d');
+            
+            // Lisbon-specific months with events
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            const visitorData = [18000, 19000, 22000, 28000, 32000, 35000, 
+                               38000, 40000, 32000, 28000, 22000, 20000];
+            const eventData = [true, false, true, true, true, true, 
+                              true, true, true, false, true, false];
+            const eventNames = ['New Year', '', 'Carnival', 'April Fair', 'Santos Populares', 'Music Fest', 
+                               'Jazz Festival', 'Beer Festival', 'Design Week', '', 'Web Summit', ''];
+            
+            // Create calendar chart
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Monthly Visitors',
+                            data: visitorData,
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Major Events',
+                            data: eventData.map((event, i) => event ? visitorData[i] * 1.15 : null),
+                            type: 'line',
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            pointBackgroundColor: 'rgba(231, 76, 60, 1)',
+                            pointRadius: 8,
+                            yAxisID: 'y'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Month'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Visitors'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                afterLabel: function(context) {
+                                    const index = context.dataIndex;
+                                    if (eventData[index]) {
+                                        return `Major Event: ${eventNames[index]}`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function initializeMap() {
+            // Initialize the map centered on Lisbon
+            const map = L.map('map').setView([38.7223, -9.1393], 13);
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Lisbon-specific hotspot data
+            const hotspots = [
+                { lat: 38.710, lng: -9.136, name: 'Baixa/Chiado', intensity: 0.95, residents: 12000, tourists: 25000 },
+                { lat: 38.711, lng: -9.130, name: 'Alfama', intensity: 0.85, residents: 8000, tourists: 18000 },
+                { lat: 38.697, lng: -9.177, name: 'Belém', intensity: 0.75, residents: 5000, tourists: 15000 },
+                { lat: 38.715, lng: -9.146, name: 'Bairro Alto', intensity: 0.90, residents: 9000, tourists: 22000 },
+                { lat: 38.768, lng: -9.094, name: 'Parque das Nações', intensity: 0.60, residents: 15000, tourists: 8000 },
+                { lat: 38.721, lng: -9.149, name: 'Avenida da Liberdade', intensity: 0.80, residents: 7000, tourists: 17000 },
+                { lat: 38.718, lng: -9.136, name: 'Rossio Square', intensity: 0.92, residents: 3000, tourists: 20000 },
+                { lat: 38.707, lng: -9.143, name: 'Commerce Square', intensity: 0.98, residents: 2000, tourists: 28000 }
+            ];
+            
+            // Add hotspots to the map with proper color coding
+            hotspots.forEach(hotspot => {
+                // Use smaller radius (15-25 instead of 25-50)
+                const radius = hotspot.intensity * 15 + 10;
+                
+                // Better color coding based on intensity
+                let color;
+                if (hotspot.intensity >= 0.9) {
+                    color = '#e74c3c'; // Red for very high intensity
+                } else if (hotspot.intensity >= 0.75) {
+                    color = '#f39c12'; // Orange for high intensity
+                } else if (hotspot.intensity >= 0.6) {
+                    color = '#f1c40f'; // Yellow for medium intensity
+                } else {
+                    color = '#2ecc71'; // Green for low intensity
+                }
+                
+                L.circle([hotspot.lat, hotspot.lng], {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.6,
+                    radius: radius * 30 // Reduced from 50 to 30 for smaller circles
+                }).addTo(map).bindPopup(`
+                    <div style="font-family: 'Montserrat', sans-serif;">
+                        <strong>${hotspot.name}</strong><br>
+                        Tourist Intensity: ${Math.round(hotspot.intensity * 100)}%<br>
+                        Residents: ${hotspot.residents.toLocaleString()}<br>
+                        Daily Tourists: ${hotspot.tourists.toLocaleString()}<br>
+                        Ratio: 1:${(hotspot.residents/hotspot.tourists).toFixed(1)}
+                    </div>
+                `);
+            });
+            
+            // Add flow lines between hotspots (simplified)
+            const significantFlows = [
+                { from: 0, to: 1, intensity: 0.8 }, // Baixa to Alfama
+                { from: 0, to: 3, intensity: 0.7 }, // Baixa to Bairro Alto
+                { from: 0, to: 6, intensity: 0.9 }, // Baixa to Rossio
+                { from: 0, to: 7, intensity: 0.9 }, // Baixa to Commerce Square
+                { from: 1, to: 3, intensity: 0.6 }, // Alfama to Bairro Alto
+                { from: 2, to: 0, intensity: 0.5 }, // Belém to Baixa
+                { from: 4, to: 0, intensity: 0.4 }, // Parque Nações to Baixa
+            ];
+            
+            significantFlows.forEach(flow => {
+                const from = hotspots[flow.from];
+                const to = hotspots[flow.to];
+                
+                L.polyline([
+                    [from.lat, from.lng],
+                    [to.lat, to.lng]
+                ], {
+                    color: `rgba(52, 152, 219, ${flow.intensity})`,
+                    weight: flow.intensity * 6
+                }).addTo(map).bindPopup(`
+                    <div style="font-family: 'Montserrat', sans-serif;">
+                        <strong>Tourist Flow</strong><br>
+                        ${from.name} → ${to.name}<br>
+                        Intensity: ${Math.round(flow.intensity * 100)}%
+                    </div>
+                `);
+            });
+            
+            // Add a legend
+            const legend = L.control({position: 'bottomright'});
+            legend.onAdd = function(map) {
+                const div = L.DomUtil.create('div', 'info legend');
+                div.style.fontFamily = "'Montserrat', sans-serif";
+                div.style.padding = "10px";
+                div.style.backgroundColor = "white";
+                div.style.borderRadius = "5px";
+                div.style.boxShadow = "0 0 10px rgba(0,0,0,0.2)";
+                div.innerHTML = `
+                    <h4 style="margin: 0 0 8px 0; font-weight: 600;">Tourist Intensity</h4>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #e74c3c; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Very High (90-100%)
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #f39c12; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> High (75-89%)
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #f1c40f; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Medium (60-74%)
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="background: #2ecc71; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Low (<60%)
+                    </div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
+        }
+        
+        function initializeCapacityChart() {
+            const ctx = document.getElementById('capacityChart').getContext('2d');
+            const resourceType = document.getElementById('resourceType').value;
+            
+            // Labels based on resource type with Lisbon-specific data
+            let labels, capacityData, usageData, resourceLabel;
+            
+            switch(resourceType) {
+                case 'transport':
+                    labels = ['Tram 28', 'Metro', 'Buses', 'Trains', 'Ferries'];
+                    capacityData = [450, 1200, 800, 600, 300];
+                    usageData = [430, 1100, 720, 520, 280];
+                    resourceLabel = 'Passenger Capacity';
+                    break;
+                case 'parking':
+                    labels = ['Baixa', 'Chiado', 'Belém', 'Parque Nações', 'Alfama'];
+                    capacityData = [600, 800, 500, 1200, 300];
+                    usageData = [580, 780, 450, 900, 290];
+                    resourceLabel = 'Parking Spaces';
+                    break;
+                case 'waste':
+                    labels = ['Historic Center', 'Modern District', 'Residential West', 'Residential East', 'Tourist Zone'];
+                    capacityData = [18, 22, 25, 20, 16];
+                    usageData = [17, 20, 22, 18, 15];
+                    resourceLabel = 'Waste Collection Capacity (tons)';
+                    break;
+            }
+            
+            // Calculate usage percentage
+            const usagePercentages = usageData.map((usage, i) => 
+                Math.round((usage / capacityData[i]) * 100)
+            );
+            
+            // Create capacity vs usage chart
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Capacity',
+                            data: capacityData,
+                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Current Usage',
+                            data: usageData,
+                            backgroundColor: 'rgba(46, 204, 113, 0.7)',
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Usage %',
+                            data: usagePercentages,
+                            type: 'line',
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: resourceType === 'transport' ? 'Transport Type' : 
+                                      resourceType === 'parking' ? 'Location' : 'District'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: resourceLabel
+                            },
+                            position: 'left'
+                        },
+                        y1: {
+                            title: {
+                                display: true,
+                                text: 'Usage Percentage'
+                            },
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
