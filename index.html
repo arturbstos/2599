@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tourism Management Dashboard</title>
+    <title>Lisbon Tourism Management Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
@@ -77,10 +77,11 @@
         
         .chart-container {
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            height: 400px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            height: 450px;
+            border: 1px solid #eef2f7;
         }
         
         .full-width {
@@ -93,7 +94,7 @@
         
         .chart-title {
             font-size: 18px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: #2c3e50;
             display: flex;
             justify-content: space-between;
@@ -102,7 +103,7 @@
         }
         
         .chart-wrapper {
-            height: calc(100% - 40px);
+            height: calc(100% - 50px);
             position: relative;
         }
         
@@ -599,6 +600,11 @@
     </div>
 
     <script>
+        // Register Montserrat font for Chart.js
+        Chart.defaults.font.family = "'Montserrat', sans-serif";
+        Chart.defaults.color = '#7f8c8d';
+        Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.1)';
+        
         // Initialize charts when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             initializeHeatmapMap();
@@ -793,42 +799,115 @@
                         {
                             label: 'Actual',
                             data: actualData.slice(0, 7),
-                            borderColor: 'rgb(52, 152, 219)',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderColor: 'rgb(74, 144, 226)',
+                            backgroundColor: 'rgba(74, 144, 226, 0.1)',
                             fill: true,
-                            tension: 0.4
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgb(74, 144, 226)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         },
                         {
                             label: 'Forecast',
                             data: forecastData,
                             borderColor: 'rgb(231, 76, 60)',
                             borderDash: [5, 5],
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            backgroundColor: 'rgba(231, 76, 60, 0.05)',
                             fill: true,
-                            tension: 0.4
+                            tension: 0.4,
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgb(231, 76, 60)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500'
+                                },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#2c3e50',
+                            bodyColor: '#2c3e50',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} visitors`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         x: {
                             type: 'time',
                             time: {
                                 unit: 'day'
                             },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif"
+                                }
+                            },
                             title: {
                                 display: true,
-                                text: 'Date'
+                                text: 'Date',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 10, bottom: 0}
                             }
                         },
                         y: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif"
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            },
                             title: {
                                 display: true,
-                                text: 'Number of Tourists'
+                                text: 'Number of Tourists',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 0, bottom: 10}
                             }
                         }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
             });
@@ -857,8 +936,11 @@
                         {
                             label: 'Monthly Visitors',
                             data: visitorData,
-                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                            yAxisID: 'y'
+                            backgroundColor: 'rgba(74, 144, 226, 0.7)',
+                            borderColor: 'rgba(74, 144, 226, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
                         },
                         {
                             label: 'Major Events',
@@ -867,30 +949,40 @@
                             borderColor: 'rgba(231, 76, 60, 1)',
                             backgroundColor: 'rgba(231, 76, 60, 0.1)',
                             pointBackgroundColor: 'rgba(231, 76, 60, 1)',
-                            pointRadius: 8,
-                            yAxisID: 'y'
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            tension: 0.3,
+                            borderWidth: 3,
+                            fill: false
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Month'
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
                             }
                         },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Number of Visitors'
-                            }
-                        }
-                    },
-                    plugins: {
                         tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#2c3e50',
+                            bodyColor: '#2c3e50',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
                             callbacks: {
                                 afterLabel: function(context) {
                                     const index = context.dataIndex;
@@ -898,9 +990,71 @@
                                         return `Major Event: ${eventNames[index]}`;
                                     }
                                     return '';
+                                },
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        return `Visitors: ${context.parsed.y.toLocaleString()}`;
+                                    } else {
+                                        return `Event Impact: ${context.parsed.y ? context.parsed.y.toLocaleString() : 'No event'}`;
+                                    }
                                 }
                             }
                         }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Month',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 10, bottom: 0}
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif"
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Number of Visitors',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 0, bottom: 10}
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
             });
@@ -1042,14 +1196,20 @@
                         {
                             label: 'Capacity',
                             data: capacityData,
-                            backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                            yAxisID: 'y'
+                            backgroundColor: 'rgba(74, 144, 226, 0.7)',
+                            borderColor: 'rgba(74, 144, 226, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
                         },
                         {
                             label: 'Current Usage',
                             data: usageData,
                             backgroundColor: 'rgba(46, 204, 113, 0.7)',
-                            yAxisID: 'y'
+                            borderColor: 'rgba(46, 204, 113, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
                         },
                         {
                             label: 'Usage %',
@@ -1057,6 +1217,14 @@
                             type: 'line',
                             borderColor: 'rgba(231, 76, 60, 1)',
                             backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            pointBackgroundColor: 'rgba(231, 76, 60, 1)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            tension: 0.3,
+                            borderWidth: 2,
+                            fill: false,
                             yAxisID: 'y1'
                         }
                     ]
@@ -1064,37 +1232,118 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500'
+                                },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#2c3e50',
+                            bodyColor: '#2c3e50',
+                            borderColor: '#e0e0e0',
+                            borderWidth: 1,
+                            padding: 12,
+                            boxPadding: 6,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 2) {
+                                        return `Usage: ${context.parsed.y}%`;
+                                    }
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
                     scales: {
                         x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500'
+                                }
+                            },
                             title: {
                                 display: true,
-                                text: 'Transport Type'
+                                text: 'Transport Type',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 10, bottom: 0}
                             }
                         },
                         y: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif"
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            },
                             title: {
                                 display: true,
-                                text: resourceLabel
+                                text: resourceLabel,
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 0, bottom: 10}
                             },
                             position: 'left'
                         },
                         y1: {
                             title: {
                                 display: true,
-                                text: 'Usage Percentage'
+                                text: 'Usage Percentage',
+                                font: {
+                                    family: "'Montserrat', sans-serif",
+                                    weight: '500',
+                                    size: 12
+                                },
+                                color: '#7f8c8d',
+                                padding: {top: 0, bottom: 10}
                             },
                             position: 'right',
                             min: 0,
                             max: 100,
+                            grid: {
+                                drawOnChartArea: false,
+                            },
                             ticks: {
+                                font: {
+                                    family: "'Montserrat', sans-serif"
+                                },
                                 callback: function(value) {
                                     return value + '%';
                                 }
-                            },
-                            grid: {
-                                drawOnChartArea: false
                             }
                         }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
                 }
             });
@@ -1102,4 +1351,3 @@
     </script>
 </body>
 </html>
-
