@@ -87,6 +87,10 @@
             grid-column: 1 / -1;
         }
         
+        .half-width {
+            grid-column: span 1;
+        }
+        
         .chart-title {
             font-size: 18px;
             margin-bottom: 15px;
@@ -122,7 +126,7 @@
             border-radius: 2px;
         }
         
-        #map {
+        .map-container {
             height: 100%;
             border-radius: 4px;
         }
@@ -181,6 +185,186 @@
             color: #e74c3c;
         }
         
+        /* New sections styling */
+        .incidents-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+        }
+        
+        .incidents-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .incident-categories {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .category-tag {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .category-police { background-color: #3498db; color: white; }
+        .category-fire { background-color: #e74c3c; color: white; }
+        .category-transit { background-color: #f39c12; color: white; }
+        .category-park { background-color: #2ecc71; color: white; }
+        .category-schools { background-color: #9b59b6; color: white; }
+        .category-hosting { background-color: #1abc9c; color: white; }
+        
+        .incident-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .incident-item {
+            padding: 12px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .incident-item.warning {
+            border-left-color: #e74c3c;
+            background-color: #fdedec;
+        }
+        
+        .incident-location {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .incident-description {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .incident-status {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .status-tag {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .status-received { background-color: #3498db; color: white; }
+        .status-progress { background-color: #f39c12; color: white; }
+        .status-resolved { background-color: #2ecc71; color: white; }
+        
+        .actions-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            height: 400px;
+        }
+        
+        .actions-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .action-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .action-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .action-option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .action-option.selected {
+            background-color: #e1f5fe;
+            border-left: 4px solid #3498db;
+        }
+        
+        .action-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .icon-terminate { background-color: #e74c3c; }
+        .icon-downsize { background-color: #f39c12; }
+        .icon-reboot { background-color: #3498db; }
+        .icon-keep { background-color: #2ecc71; }
+        .icon-upsize { background-color: #9b59b6; }
+        
+        .action-label {
+            font-weight: 500;
+        }
+        
+        .settings-panel {
+            margin-top: 20px;
+        }
+        
+        .settings-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .setting-label {
+            font-size: 14px;
+        }
+        
+        .setting-value {
+            font-weight: 600;
+            color: #3498db;
+        }
+        
         @media (max-width: 1200px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -188,6 +372,10 @@
             
             .metrics-row {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .half-width {
+                grid-column: 1 / -1;
             }
         }
         
@@ -201,6 +389,10 @@
                 gap: 15px;
                 align-items: flex-start;
             }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -208,8 +400,7 @@
     <div class="dashboard-container">
         <header>
             <div>
-                <h1>Lisbon Tourism Management Dashboard</h1>
-                <div class="city-badge">Lisbon, Portugal</div>
+                <h1>Tourism Management Dashboard</h1>
             </div>
             <div class="date-selector">
                 <select id="timeRange">
@@ -253,26 +444,128 @@
             <div class="chart-container">
                 <div class="chart-title">
                     Heatmap – Tourist-to-Resident Ratio / Density
-                    <select id="heatmapMetric">
-                        <option value="ratio">Ratio</option>
-                        <option value="density">Density</option>
-                    </select>
                 </div>
                 <div class="chart-wrapper">
-                    <canvas id="heatmapChart"></canvas>
+                    <div id="heatmapMap" class="map-container"></div>
                 </div>
             </div>
             
             <div class="chart-container">
                 <div class="chart-title">
                     Tourist / Passenger Inflow Forecasts
-                    <select id="forecastType">
-                        <option value="tourists">Tourists</option>
-                        <option value="passengers">Passengers</option>
-                    </select>
                 </div>
                 <div class="chart-wrapper">
                     <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- New Incidents Section -->
+            <div class="incidents-container half-width">
+                <div class="incidents-header">
+                    <div class="chart-title">Tourism Incidents & Reports</div>
+                </div>
+                <div class="incident-categories">
+                    <div class="category-tag category-police">PO - Police</div>
+                    <div class="category-tag category-fire">FI - Fire</div>
+                    <div class="category-tag category-transit">TR - Transit</div>
+                    <div class="category-tag category-park">PA - Park</div>
+                    <div class="category-tag category-schools">SC - Schools</div>
+                    <div class="category-tag category-hosting">HO - Hosting</div>
+                </div>
+                <div class="incident-list">
+                    <div class="incident-item warning">
+                        <div class="incident-location">Baixa/Chiado - Rua Augusta</div>
+                        <div class="incident-description">Overcrowding reported with pedestrian traffic at standstill. Safety concerns raised by local businesses.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-received">Received</div>
+                            <div class="status-tag status-progress">In Progress</div>
+                        </div>
+                    </div>
+                    <div class="incident-item">
+                        <div class="incident-location">Alfama - Tram 28 Route</div>
+                        <div class="incident-description">Extended waiting times for tram service due to high tourist volume. Consider increasing frequency.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-received">Received</div>
+                        </div>
+                    </div>
+                    <div class="incident-item warning">
+                        <div class="incident-location">Belém - Jerónimos Monastery</div>
+                        <div class="incident-description">Queue management issues with visitors waiting over 2 hours. Temporary capacity limits recommended.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-progress">In Progress</div>
+                        </div>
+                    </div>
+                    <div class="incident-item">
+                        <div class="incident-location">Bairro Alto - Nightlife District</div>
+                        <div class="incident-description">Noise complaints from residents after 11 PM. Consider implementing quiet hours.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-received">Received</div>
+                        </div>
+                    </div>
+                    <div class="incident-item">
+                        <div class="incident-location">Commerce Square</div>
+                        <div class="incident-description">Waste accumulation reported near tourist information center. Additional bins needed.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-resolved">Resolved</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- New Recommended Actions Section -->
+            <div class="actions-container half-width">
+                <div class="actions-title">Recommended Actions</div>
+                <div class="action-options">
+                    <div class="action-option selected">
+                        <div class="action-icon icon-upsize">U</div>
+                        <div class="action-label">Upsize Infrastructure</div>
+                    </div>
+                    <div class="action-option">
+                        <div class="action-icon icon-keep">K</div>
+                        <div class="action-label">Keep Current Levels</div>
+                    </div>
+                    <div class="action-option">
+                        <div class="action-icon icon-reboot">R</div>
+                        <div class="action-label">Reboot Services</div>
+                    </div>
+                    <div class="action-option">
+                        <div class="action-icon icon-downsize">D</div>
+                        <div class="action-label">Downsize Operations</div>
+                    </div>
+                    <div class="action-option">
+                        <div class="action-icon icon-terminate">T</div>
+                        <div class="action-label">Terminate Initiatives</div>
+                    </div>
+                </div>
+                
+                <div class="settings-panel">
+                    <div class="settings-title">Implementation Settings</div>
+                    <div class="settings-grid">
+                        <div class="setting-item">
+                            <div class="setting-label">Tourist Density Threshold</div>
+                            <div class="setting-value">0.9</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Resident Satisfaction Target</div>
+                            <div class="setting-value">0.8</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Infrastructure Utilization</div>
+                            <div class="setting-value">0.7</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Waste Management Capacity</div>
+                            <div class="setting-value">0.6</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Transport Efficiency</div>
+                            <div class="setting-value">0.5</div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-label">Noise Control Compliance</div>
+                            <div class="setting-value">0.4</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -290,18 +583,13 @@
                     Interactive Flow Map – Mobility & Hotspot Mapping
                 </div>
                 <div class="chart-wrapper">
-                    <div id="map"></div>
+                    <div id="flowMap" class="map-container"></div>
                 </div>
             </div>
             
             <div class="chart-container full-width">
                 <div class="chart-title">
                     Bar / Overlay Chart – Capacity vs. Usage / Resource Pressure
-                    <select id="resourceType">
-                        <option value="transport">Public Transport</option>
-                        <option value="parking">Parking</option>
-                        <option value="waste">Waste Management</option>
-                    </select>
                 </div>
                 <div class="chart-wrapper">
                     <canvas id="capacityChart"></canvas>
@@ -313,10 +601,10 @@
     <script>
         // Initialize charts when the page loads
         document.addEventListener('DOMContentLoaded', function() {
-            initializeHeatmap();
+            initializeHeatmapMap();
             initializeForecastChart();
             initializeCalendarChart();
-            initializeMap();
+            initializeFlowMap();
             initializeCapacityChart();
             
             // Add event listeners
@@ -325,103 +613,148 @@
                 // In a real application, this would fetch new data from an API
             });
             
-            document.getElementById('heatmapMetric').addEventListener('change', initializeHeatmap);
-            document.getElementById('forecastType').addEventListener('change', initializeForecastChart);
-            document.getElementById('resourceType').addEventListener('change', initializeCapacityChart);
+            // Add interaction for action options
+            const actionOptions = document.querySelectorAll('.action-option');
+            actionOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    actionOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
         });
         
-        function initializeHeatmap() {
-            const ctx = document.getElementById('heatmapChart').getContext('2d');
-            const metric = document.getElementById('heatmapMetric').value;
+        function initializeHeatmapMap() {
+            // Initialize the map centered on Lisbon
+            const map = L.map('heatmapMap').setView([38.7223, -9.1393], 13);
             
-            // Lisbon-specific areas
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const areas = ['Baixa/Chiado', 'Alfama', 'Belém', 'Bairro Alto', 'Parque das Nações', 'Avenida da Liberdade', 'Mouraria'];
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
             
-            // Generate sample data
-            const data = [];
-            for (let i = 0; i < areas.length; i++) {
-                for (let j = 0; j < days.length; j++) {
-                    let value;
-                    if (metric === 'ratio') {
-                        // Higher ratios on weekends and in tourist areas
-                        const isWeekend = j >= 5; // Saturday and Sunday
-                        const isTouristArea = i <= 3; // First four areas are more touristy
-                        value = (isTouristArea ? 1.8 : 0.7) + (isWeekend ? 0.6 : 0) + (Math.random() * 0.4 - 0.2);
-                    } else {
-                        // Higher density on weekends and in tourist areas
-                        const isWeekend = j >= 5;
-                        const isTouristArea = i <= 3;
-                        value = (isTouristArea ? 800 : 300) + (isWeekend ? 200 : 0) + (Math.random() * 100 - 50);
-                    }
-                    data.push({
-                        x: days[j],
-                        y: areas[i],
-                        v: value
-                    });
-                }
-            }
-            
-            // Create heatmap chart
-            new Chart(ctx, {
-                type: 'bubble',
-                data: {
-                    datasets: [{
-                        label: 'Tourist Density',
-                        data: data,
-                        backgroundColor: function(context) {
-                            const value = context.dataset.data[context.dataIndex].v;
-                            const alpha = metric === 'ratio' ? 
-                                Math.min(1, value / 2.5) : 
-                                Math.min(1, value / 1100);
-                            return `rgba(52, 152, 219, ${alpha})`;
-                        }
-                    }]
+            // Lisbon-specific hotspot data for congestion heatmap
+            const congestionAreas = [
+                { 
+                    lat: 38.710, lng: -9.136, 
+                    name: 'Baixa/Chiado', 
+                    congestion: 0.95, 
+                    ratio: '1:2.1',
+                    density: '850 people/km²'
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'category',
-                            title: {
-                                display: true,
-                                text: 'Day of Week'
-                            }
-                        },
-                        y: {
-                            type: 'category',
-                            title: {
-                                display: true,
-                                text: 'Lisbon Areas'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: metric === 'ratio' ? 
-                                'Tourist-to-Resident Ratio (Higher = More Tourists)' : 
-                                'Tourist Density (People per km²)'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw.v;
-                                    return metric === 'ratio' ? 
-                                        `Ratio: ${value.toFixed(2)}` : 
-                                        `Density: ${Math.round(value)} people/km²`;
-                                }
-                            }
-                        }
-                    }
+                { 
+                    lat: 38.711, lng: -9.130, 
+                    name: 'Alfama', 
+                    congestion: 0.85, 
+                    ratio: '1:2.3',
+                    density: '720 people/km²'
+                },
+                { 
+                    lat: 38.697, lng: -9.177, 
+                    name: 'Belém', 
+                    congestion: 0.75, 
+                    ratio: '1:3.0',
+                    density: '650 people/km²'
+                },
+                { 
+                    lat: 38.715, lng: -9.146, 
+                    name: 'Bairro Alto', 
+                    congestion: 0.90, 
+                    ratio: '1:2.4',
+                    density: '780 people/km²'
+                },
+                { 
+                    lat: 38.768, lng: -9.094, 
+                    name: 'Parque das Nações', 
+                    congestion: 0.60, 
+                    ratio: '1:1.9',
+                    density: '420 people/km²'
+                },
+                { 
+                    lat: 38.721, lng: -9.149, 
+                    name: 'Avenida da Liberdade', 
+                    congestion: 0.80, 
+                    ratio: '1:2.4',
+                    density: '680 people/km²'
+                },
+                { 
+                    lat: 38.718, lng: -9.136, 
+                    name: 'Rossio Square', 
+                    congestion: 0.92, 
+                    ratio: '1:6.7',
+                    density: '920 people/km²'
+                },
+                { 
+                    lat: 38.707, lng: -9.143, 
+                    name: 'Commerce Square', 
+                    congestion: 0.98, 
+                    ratio: '1:14.0',
+                    density: '1100 people/km²'
                 }
+            ];
+            
+            // Add congestion areas to the map with proper color coding
+            congestionAreas.forEach(area => {
+                // Use appropriate radius based on congestion
+                const radius = area.congestion * 300 + 100;
+                
+                // Color coding based on congestion level
+                let color;
+                if (area.congestion >= 0.9) {
+                    color = '#e74c3c'; // Red for very high congestion
+                } else if (area.congestion >= 0.75) {
+                    color = '#f39c12'; // Orange for high congestion
+                } else if (area.congestion >= 0.6) {
+                    color = '#f1c40f'; // Yellow for medium congestion
+                } else {
+                    color = '#2ecc71'; // Green for low congestion
+                }
+                
+                L.circle([area.lat, area.lng], {
+                    color: color,
+                    fillColor: color,
+                    fillOpacity: 0.6,
+                    radius: radius
+                }).addTo(map).bindPopup(`
+                    <div style="font-family: 'Montserrat', sans-serif;">
+                        <strong>${area.name}</strong><br>
+                        Congestion Level: ${Math.round(area.congestion * 100)}%<br>
+                        Tourist-to-Resident Ratio: ${area.ratio}<br>
+                        Tourist Density: ${area.density}
+                    </div>
+                `);
             });
+            
+            // Add a legend
+            const legend = L.control({position: 'bottomright'});
+            legend.onAdd = function(map) {
+                const div = L.DomUtil.create('div', 'info legend');
+                div.style.fontFamily = "'Montserrat', sans-serif";
+                div.style.padding = "10px";
+                div.style.backgroundColor = "white";
+                div.style.borderRadius = "5px";
+                div.style.boxShadow = "0 0 10px rgba(0,0,0,0.2)";
+                div.innerHTML = `
+                    <h4 style="margin: 0 0 8px 0; font-weight: 600;">Congestion Level</h4>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #e74c3c; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Very High (90-100%)
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #f39c12; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> High (75-89%)
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="background: #f1c40f; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Medium (60-74%)
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="background: #2ecc71; width: 12px; height: 12px; display: inline-block; margin-right: 5px; border-radius: 50%;"></span> Low (<60%)
+                    </div>
+                `;
+                return div;
+            };
+            legend.addTo(map);
         }
         
         function initializeForecastChart() {
             const ctx = document.getElementById('forecastChart').getContext('2d');
-            const type = document.getElementById('forecastType').value;
             
             // Generate dates for the next 30 days
             const dates = [];
@@ -431,7 +764,7 @@
             
             // Generate sample data with Lisbon patterns
             const actualData = dates.map(date => {
-                const base = type === 'tourists' ? 22000 : 16000;
+                const base = 22000;
                 // Higher on weekends
                 const dayOfWeek = date.day();
                 const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.3 : 0;
@@ -443,7 +776,7 @@
             const forecastData = dates.map((date, i) => {
                 if (i < 7) return actualData[i]; // First 7 days are "actual"
                 
-                const base = type === 'tourists' ? 22000 : 16000;
+                const base = 22000;
                 const dayOfWeek = date.day();
                 const weekendBoost = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.3 : 0;
                 const trend = 1 + (i - 7) * 0.005; // Slight upward trend
@@ -493,7 +826,7 @@
                         y: {
                             title: {
                                 display: true,
-                                text: type === 'tourists' ? 'Number of Tourists' : 'Number of Passengers'
+                                text: 'Number of Tourists'
                             }
                         }
                     }
@@ -573,9 +906,9 @@
             });
         }
         
-        function initializeMap() {
+        function initializeFlowMap() {
             // Initialize the map centered on Lisbon
-            const map = L.map('map').setView([38.7223, -9.1393], 13);
+            const map = L.map('flowMap').setView([38.7223, -9.1393], 13);
             
             // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -596,7 +929,7 @@
             
             // Add hotspots to the map with proper color coding
             hotspots.forEach(hotspot => {
-                // Use smaller radius (15-25 instead of 25-50)
+                // Use smaller radius
                 const radius = hotspot.intensity * 15 + 10;
                 
                 // Better color coding based on intensity
@@ -615,7 +948,7 @@
                     color: color,
                     fillColor: color,
                     fillOpacity: 0.6,
-                    radius: radius * 30 // Reduced from 50 to 30 for smaller circles
+                    radius: radius * 7
                 }).addTo(map).bindPopup(`
                     <div style="font-family: 'Montserrat', sans-serif;">
                         <strong>${hotspot.name}</strong><br>
@@ -647,7 +980,7 @@
                     [to.lat, to.lng]
                 ], {
                     color: `rgba(52, 152, 219, ${flow.intensity})`,
-                    weight: flow.intensity * 6
+                    weight: flow.intensity * 2
                 }).addTo(map).bindPopup(`
                     <div style="font-family: 'Montserrat', sans-serif;">
                         <strong>Tourist Flow</strong><br>
@@ -688,31 +1021,12 @@
         
         function initializeCapacityChart() {
             const ctx = document.getElementById('capacityChart').getContext('2d');
-            const resourceType = document.getElementById('resourceType').value;
             
             // Labels based on resource type with Lisbon-specific data
-            let labels, capacityData, usageData, resourceLabel;
-            
-            switch(resourceType) {
-                case 'transport':
-                    labels = ['Tram 28', 'Metro', 'Buses', 'Trains', 'Ferries'];
-                    capacityData = [450, 1200, 800, 600, 300];
-                    usageData = [430, 1100, 720, 520, 280];
-                    resourceLabel = 'Passenger Capacity';
-                    break;
-                case 'parking':
-                    labels = ['Baixa', 'Chiado', 'Belém', 'Parque Nações', 'Alfama'];
-                    capacityData = [600, 800, 500, 1200, 300];
-                    usageData = [580, 780, 450, 900, 290];
-                    resourceLabel = 'Parking Spaces';
-                    break;
-                case 'waste':
-                    labels = ['Historic Center', 'Modern District', 'Residential West', 'Residential East', 'Tourist Zone'];
-                    capacityData = [18, 22, 25, 20, 16];
-                    usageData = [17, 20, 22, 18, 15];
-                    resourceLabel = 'Waste Collection Capacity (tons)';
-                    break;
-            }
+            const labels = ['Tram 28', 'Metro', 'Buses', 'Trains', 'Ferries'];
+            const capacityData = [450, 1200, 800, 600, 300];
+            const usageData = [430, 1100, 720, 520, 280];
+            const resourceLabel = 'Passenger Capacity';
             
             // Calculate usage percentage
             const usagePercentages = usageData.map((usage, i) => 
@@ -754,8 +1068,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: resourceType === 'transport' ? 'Transport Type' : 
-                                      resourceType === 'parking' ? 'Location' : 'District'
+                                text: 'Transport Type'
                             }
                         },
                         y: {
