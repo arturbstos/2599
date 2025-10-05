@@ -1081,7 +1081,7 @@
             const hotspots = [
                 { lat: 38.710, lng: -9.136, name: 'Baixa/Chiado', intensity: 0.95, residents: 12000, tourists: 25000 },
                 { lat: 38.711, lng: -9.130, name: 'Alfama', intensity: 0.85, residents: 8000, tourists: 18000 },
-                { lat: 38.697, lng: -9.177, name: 'Belém', intensity: 0.75, residents: 5000, tourists: 15000 },
+                { lat: 38.699, lng: -9.209, name: 'Belém', intensity: 0.75, residents: 5000, tourists: 15000 },
                 { lat: 38.715, lng: -9.146, name: 'Bairro Alto', intensity: 0.90, residents: 9000, tourists: 22000 },
                 { lat: 38.768, lng: -9.094, name: 'Parque das Nações', intensity: 0.60, residents: 15000, tourists: 8000 },
                 { lat: 38.721, lng: -9.149, name: 'Avenida da Liberdade', intensity: 0.80, residents: 7000, tourists: 17000 },
@@ -1129,7 +1129,7 @@
                 { from: 0, to: 6, intensity: 0.9 }, // Baixa to Rossio
                 { from: 0, to: 7, intensity: 0.9 }, // Baixa to Commerce Square
                 { from: 1, to: 3, intensity: 0.6 }, // Alfama to Bairro Alto
-                { from: 2, to: 0, intensity: 0.5 }, // Belém to Baixa
+                { from: 7, to: 2, intensity: 0.6 }, // Commerce Square to Belem
                 { from: 4, to: 0, intensity: 0.4 }, // Parque Nações to Baixa
             ];
             
@@ -1141,8 +1141,8 @@
                     [from.lat, from.lng],
                     [to.lat, to.lng]
                 ], {
-                    color: `rgba(52, 152, 219, ${flow.intensity})`,
-                    weight: flow.intensity * 2
+                    color: `rgba(190, 23, 23, ${flow.intensity})`,
+                    weight: flow.intensity * 7
                 }).addTo(map).bindPopup(`
                     <div style="font-family: 'Montserrat', sans-serif;">
                         <strong>Tourist Flow</strong><br>
