@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tourism Management Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.1"></script>
@@ -40,7 +39,21 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #e0e0e0;
         }
-        
+        footer {
+            margin-top: 30px;
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .nova-footer {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: #1a3a6d;
+            margin-bottom: 5px;
+        }
         h1 {
             color: #2c3e50;
             font-size: 28px;
@@ -396,22 +409,7 @@
             .settings-grid {
                 grid-template-columns: 1fr;
             }
-            footer {
-        margin-top: 30px;
-        padding: 20px 0;
-        text-align: center;
-        border-top: 1px solid #e0e0e0;
-        color: #7f8c8d;
-        font-size: 14px;
-    }
-
-    .nova-footer {
-        font-family: 'Playfair Display', serif;
-        font-weight: 600;
-        color: #1a3a6d;
-        margin-bottom: 5px;
-    }
-        }
+        
     </style>
 </head>
 <body>
@@ -1358,13 +1356,18 @@
                 }
             });
         }
+
+        
     </script>
+    
     <footer>
-    <div class="nova-footer">Nova School of Business and Economics®</div>
-    <div>Demonstration for 2599 - Project Scoping Group 4.12</div>
-</footer>
+        <div class="nova-footer">Nova School of Business and Economics®</div>
+        <div>Demonstration for 2599 - Project Scoping Group 4.12</div>
+    </footer>
+
 </body>
 </html>
+
 
 
 
