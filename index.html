@@ -409,7 +409,7 @@
             .settings-grid {
                 grid-template-columns: 1fr;
             }
-        
+        }
     </style>
 </head>
 <body>
@@ -417,8 +417,6 @@
         <header>
             <div>
                 <h1>Tourism Management Dashboard</h1>
-            </div>
-         
             </div>
         </header>
         
@@ -468,8 +466,8 @@
                 </div>
             </div>
             
-            <!-- New Incidents Section -->
-            <div class="incidents-container half-width">
+            <!-- Expanded Incidents Section -->
+            <div class="incidents-container full-width">
                 <div class="incidents-header">
                     <div class="chart-title">Tourism Incidents & Reports</div>
                 </div>
@@ -518,61 +516,18 @@
                             <div class="status-tag status-resolved">Resolved</div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- New Recommended Actions Section -->
-            <div class="actions-container half-width">
-                <div class="actions-title">Recommended Actions</div>
-                <div class="action-options">
-                    <div class="action-option selected">
-                        <div class="action-icon icon-upsize">U</div>
-                        <div class="action-label">Upsize Infrastructure</div>
-                    </div>
-                    <div class="action-option">
-                        <div class="action-icon icon-keep">K</div>
-                        <div class="action-label">Keep Current Levels</div>
-                    </div>
-                    <div class="action-option">
-                        <div class="action-icon icon-reboot">R</div>
-                        <div class="action-label">Reboot Services</div>
-                    </div>
-                    <div class="action-option">
-                        <div class="action-icon icon-downsize">D</div>
-                        <div class="action-label">Downsize Operations</div>
-                    </div>
-                    <div class="action-option">
-                        <div class="action-icon icon-terminate">T</div>
-                        <div class="action-label">Terminate Initiatives</div>
-                    </div>
-                </div>
-                
-                <div class="settings-panel">
-                    <div class="settings-title">Implementation Settings</div>
-                    <div class="settings-grid">
-                        <div class="setting-item">
-                            <div class="setting-label">Tourist Density Threshold</div>
-                            <div class="setting-value">0.9</div>
+                    <div class="incident-item">
+                        <div class="incident-location">Castelo de São Jorge</div>
+                        <div class="incident-description">Limited parking availability causing traffic congestion in surrounding areas during peak hours.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-received">Received</div>
                         </div>
-                        <div class="setting-item">
-                            <div class="setting-label">Resident Satisfaction Target</div>
-                            <div class="setting-value">0.8</div>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-label">Infrastructure Utilization</div>
-                            <div class="setting-value">0.7</div>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-label">Waste Management Capacity</div>
-                            <div class="setting-value">0.6</div>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-label">Transport Efficiency</div>
-                            <div class="setting-value">0.5</div>
-                        </div>
-                        <div class="setting-item">
-                            <div class="setting-label">Noise Control Compliance</div>
-                            <div class="setting-value">0.4</div>
+                    </div>
+                    <div class="incident-item warning">
+                        <div class="incident-location">Santa Justa Lift</div>
+                        <div class="incident-description">Long queues forming with wait times exceeding 90 minutes. Consider implementing timed ticketing.</div>
+                        <div class="incident-status">
+                            <div class="status-tag status-progress">In Progress</div>
                         </div>
                     </div>
                 </div>
@@ -620,12 +575,6 @@
             initializeCalendarChart();
             initializeFlowMap();
             initializeCapacityChart();
-            
-            // Add event listeners
-            document.getElementById('refreshBtn').addEventListener('click', function() {
-                alert('Refreshing data...');
-                // In a real application, this would fetch new data from an API
-            });
             
             // Add interaction for action options
             const actionOptions = document.querySelectorAll('.action-option');
@@ -1356,19 +1305,11 @@
                 }
             });
         }
-
-        
     </script>
     
     <footer>
         <div class="nova-footer">Nova School of Business and Economics®</div>
         <div>Demonstration for 2599 - Project Scoping Group 4.12</div>
     </footer>
-
 </body>
 </html>
-
-
-
-
-
